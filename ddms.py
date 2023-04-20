@@ -1,8 +1,14 @@
 import csv
 import datetime
+from tkinter import Tk, filedialog
 from openpyxl import Workbook
 from openpyxl.utils.exceptions import IllegalCharacterError
 from openpyxl.styles import PatternFill, Font, Alignment
+
+def open_file_dialog():
+    Tk().withdraw()
+    file_path = filedialog.askopenfilename(title="Select the input file", filetypes=[("Text Files", "*.txt")])
+    return file_path
 
 def remove_illegal_chars(cell_value):
     return ''.join(c for c in cell_value if c.isprintable())
@@ -11,9 +17,11 @@ now = datetime.datetime.now()
 date_string = now.strftime('%Y-%m-%d')
 file_name = f'Pick_List_{date_string}.xlsx'
 
+input_file = open_file_dialog()
+
 # Read the data from the text file
 data = []
-with open('Reports.txt', 'r') as f:
+with open(input_file, 'r') as f:
     reader = csv.reader(f, delimiter='\t')
     for i, row in enumerate(reader):
         if i < 2:
@@ -45,19 +53,12 @@ for row_num, row in enumerate(data, start=2):
     for col_num, cell_value in enumerate(cleaned_row, start=1):
         ws.cell(row=row_num, column=col_num, value=cell_value)
 
-# Save the workbook as an .xlsx file
+# Delete columns that are not needed
 ws.delete_cols(2, 1)
-ws.delete_cols(3, 1)
-ws.delete_cols(16, 1)
-ws.delete_cols(20, 1)
-ws.delete_cols(21, 1)
-ws.delete_cols(22, 1)
-ws.delete_cols(23, 1)
-ws.delete_cols(27, 1)
-ws.delete_cols(28, 1)
-ws.delete_cols(29, 1)
-ws.delete_cols(30, 1)
-ws.delete_cols(31, 1)
-ws.delete_cols(32, 1)
-ws.delete_cols(33, 1)
+ws.delete_cols(2, 1)
+ws.delete_cols(14, 1)
+ws.delete_cols(17, 4)
+ws.delete_cols(20, 7)
+
+# Save the workbook as an .xlsx file
 wb.save(file_name)
